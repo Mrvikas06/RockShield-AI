@@ -221,9 +221,9 @@ export default function App() {
                   {/* Right Column: AI Analysis Outcomes & Side-by-Side Sensor Feeds */}
                   <div className="dashboard-column">
                     {/* Side-by-Side Geotechnical Feeds */}
-                    <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 20 }}>
+                    <div className="feed-grid">
                       {/* Fault Line Sensor Feeds */}
-                      <div className="panel" style={{ cursor: "pointer", height: "100%", display: "flex", flexDirection: "column", justifyContent: "space-between" }} onClick={() => setSelectedMetric({ title: "Fault Line Sensor Logs", desc: "Wall movement indicators", values: { "Active Faults": "3", "Shear Joint S01": "0.12 mm/yr", "Tension Gap T02": "1.4 mm", "Slip Ratio": "Normal" } })}>
+                      <div className="panel flex-column-between" onClick={() => setSelectedMetric({ title: "Fault Line Sensor Logs", desc: "Wall movement indicators", values: { "Active Faults": "3", "Shear Joint S01": "0.12 mm/yr", "Tension Gap T02": "1.4 mm", "Slip Ratio": "Normal" } })}>
                         <div>
                           <div className="panel-head" style={{ marginBottom: 12, paddingBottom: 8 }}>
                             <div>
