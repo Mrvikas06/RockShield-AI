@@ -1,5 +1,7 @@
 # RockShield AI — Early Landslide Warning System (SIH Command Center)
 
+**🔗 Live Production App:** [https://rockshield-ai.onrender.com](https://rockshield-ai.onrender.com)
+
 RockShield AI is a full-stack real-time geotechnical monitoring system designed for open-pit mining safety. It ingests live telemetry (ground vibration, wall movement, slope steepness, water pressure, rainfall) and pipes it to an in-process Random Forest Classifier to forecast landslide hazards and trigger automated site sirens.
 
 ---
