@@ -1,6 +1,8 @@
 import express from "express";
 import cors from "cors";
 import http from "http";
+import path from "path";
+import { fileURLToPath } from "url";
 import { Server } from "socket.io";
 import { trainModel, predict, getModelInfo } from "./model.js";
 import { FEATURES, computeRawScore, scoreToRisk } from "./dataset.js";
@@ -123,6 +125,17 @@ setInterval(() => {
   };
   io.emit("sector-update", { sector: pick, data: evaluateSector(sectorState[pick]) });
 }, 4000);
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+// Serve static assets from frontend build folder
+app.use(express.static(path.join(__dirname, "../../frontend/dist")));
+
+// Wildcard routing to route index.html
+app.get("*", (req, res) => {
+  res.sendFile(path.join(__dirname, "../../frontend/dist/index.html"));
+});
 
 const PORT = process.env.PORT || 4000;
 server.listen(PORT, () => {
