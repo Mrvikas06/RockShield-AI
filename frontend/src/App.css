@@ -99,7 +99,7 @@
 
 /* Centered content layout block with scrolling support */
 .content-container {
-  max-width: 1760px;
+  max-width: 1680px;
   width: 100%;
   margin: 0 auto;
   padding: 48px 24px 80px 24px;
