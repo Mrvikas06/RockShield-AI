@@ -166,14 +166,23 @@ export function CircularProgressChart({ targetValue = 0, isProcessing = false })
 }
 
 export function SensorAnalysisChart({ sensors }) {
+  const s = sensors || {};
+  const slope = typeof s.slope === "number" ? s.slope : 20;
+  const displacement = typeof s.displacement === "number" ? s.displacement : 1;
+  const strain = typeof s.strain === "number" ? s.strain : 0;
+  const porePressure = typeof s.porePressure === "number" ? s.porePressure : 20;
+  const vibration = typeof s.vibration === "number" ? s.vibration : 0;
+  const rainfall = typeof s.rainfall === "number" ? s.rainfall : 0;
+  const crackScore = typeof s.crackScore === "number" ? s.crackScore : 0;
+
   const data = [
-    { name: "Steepness", value: +((sensors.slope - 20) / 40).toFixed(2) },
-    { name: "Movement", value: +((sensors.displacement - 1) / 24).toFixed(2) },
-    { name: "Stretching", value: +sensors.strain.toFixed(2) },
-    { name: "Water Pressure", value: +((sensors.porePressure - 20) / 80).toFixed(2) },
-    { name: "Vibration", value: +sensors.vibration.toFixed(2) },
-    { name: "Rainfall", value: +(sensors.rainfall / 80).toFixed(2) },
-    { name: "Cracks", value: +sensors.crackScore.toFixed(2) },
+    { name: "Steepness", value: Math.max(0, Math.min(1, +((slope - 20) / 40).toFixed(2))) },
+    { name: "Movement", value: Math.max(0, Math.min(1, +((displacement - 1) / 24).toFixed(2))) },
+    { name: "Stretching", value: Math.max(0, Math.min(1, +strain.toFixed(2))) },
+    { name: "Water Pressure", value: Math.max(0, Math.min(1, +((porePressure - 20) / 80).toFixed(2))) },
+    { name: "Vibration", value: Math.max(0, Math.min(1, +vibration.toFixed(2))) },
+    { name: "Rainfall", value: Math.max(0, Math.min(1, +(rainfall / 80).toFixed(2))) },
+    { name: "Cracks", value: Math.max(0, Math.min(1, +crackScore.toFixed(2))) },
   ];
   return (
     <div className="panel">
