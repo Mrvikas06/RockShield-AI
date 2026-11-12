@@ -21,6 +21,8 @@ const TIMELINE_DATA = {
   t60: { slope: 25, displacement: 3, strain: 0.12, porePressure: 32, vibration: 0.12, rainfall: 8, crackScore: 0.08 }
 };
 
+let notificationSeq = 0;
+
 export default function App() {
   const [sector, setSector] = useState("B02");
   const [scenario, setScenario] = useState("Custom");
@@ -71,8 +73,9 @@ export default function App() {
   }, [sensors, sector]);
 
   const addNotification = (type, message) => {
-    const id = Date.now();
-    setNotifications((prev) => [{ id, type, message }, ...prev].slice(0, 10)); 
+    const timestamp = Date.now();
+    const id = `${timestamp}-${++notificationSeq}`;
+    setNotifications((prev) => [{ id, timestamp, type, message }, ...prev].slice(0, 10)); 
   };
 
   const handleRunAnalysis = useCallback(() => {

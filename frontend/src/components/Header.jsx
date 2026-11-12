@@ -191,7 +191,7 @@ export default function Header({ connected, avgVibration, activeTab, onTabChange
                           [{n.type.toUpperCase()}] {n.message}
                         </span>
                         <span style={{ fontSize: 9, color: "var(--grey-chateau)" }}>
-                          {new Date(n.id).toLocaleTimeString("en-IN", { hour12: false })}
+                          {new Date(n.timestamp || n.id).toLocaleTimeString("en-IN", { hour12: false })}
                         </span>
                       </div>
                     ))}
