@@ -343,6 +343,16 @@ export default function App() {
                       <h3 className="panel-title">Landslide Simulation Time-Travel Playback</h3>
                       <p className="panel-subtitle">Rewind and inspect past landslide simulation logs</p>
                     </div>
+                    {timelinePoint !== "live" && (
+                      <button
+                        type="button"
+                        onClick={() => handleTimelineChange("live")}
+                        className="preset-btn safe-preset active-preset"
+                        style={{ padding: "6px 14px", fontSize: 11, cursor: "pointer" }}
+                      >
+                        Return to Live
+                      </button>
+                    )}
                   </div>
                   <div style={{ display: "flex", alignItems: "center", gap: 24, marginTop: 8 }}>
                     <div style={{ flexGrow: 1, display: "flex", flexDirection: "column", gap: 8 }}>
