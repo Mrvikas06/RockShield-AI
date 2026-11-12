@@ -74,12 +74,27 @@ app.get("/api/sectors", (req, res) => {
   res.json(evaluatedSectors);
 });
 
+const SENSOR_BOUNDS = {
+  slope: { min: 0, max: 90, unit: "degrees" },
+  displacement: { min: 0, max: 100, unit: "mm" },
+  strain: { min: 0, max: 2.0, unit: "ratio" },
+  porePressure: { min: 0, max: 200, unit: "kPa" },
+  vibration: { min: 0, max: 5.0, unit: "mm/s" },
+  rainfall: { min: 0, max: 500, unit: "mm" },
+  crackScore: { min: 0, max: 1.0, unit: "ratio" },
+};
+
 app.post("/api/predict", (req, res) => {
   const body = req.body || {};
-  const required = ["slope", "displacement", "strain", "porePressure", "vibration", "rainfall", "crackScore"];
-  for (const key of required) {
-    if (typeof body[key] !== "number" || !Number.isFinite(body[key])) {
+  for (const [key, range] of Object.entries(SENSOR_BOUNDS)) {
+    const val = body[key];
+    if (typeof val !== "number" || !Number.isFinite(val)) {
       return res.status(400).json({ error: `Missing or invalid numerical field: ${key}` });
+    }
+    if (val < range.min || val > range.max) {
+      return res.status(400).json({
+        error: `Field '${key}' (${val}) out of physical bounds [${range.min}, ${range.max}] ${range.unit}`,
+      });
     }
   }
 
