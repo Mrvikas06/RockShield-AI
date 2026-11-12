@@ -22,10 +22,12 @@ console.log(`[RockShield] trainModel() returned in ${Date.now() - __t0}ms`);
 
 const SECTORS = ["A01", "A02", "A03", "B01", "B02", "B03", "C01", "C02", "C03"];
 
-// live simulated state per sector (for the auto-refreshing sector grid)
+// live simulated state and evaluation cache per sector
 const sectorState = {};
+const evaluatedSectors = {};
 SECTORS.forEach((s) => {
   sectorState[s] = randomSensorSet();
+  evaluatedSectors[s] = evaluateSector(sectorState[s]);
 });
 
 function randomSensorSet(bias = "normal") {
@@ -69,9 +71,7 @@ app.get("/api/model-info", (req, res) => {
 });
 
 app.get("/api/sectors", (req, res) => {
-  const out = {};
-  SECTORS.forEach((s) => (out[s] = evaluateSector(sectorState[s])));
-  res.json(out);
+  res.json(evaluatedSectors);
 });
 
 app.post("/api/predict", (req, res) => {
@@ -110,17 +110,14 @@ app.post("/api/predict", (req, res) => {
 
   if (hasSectorOverride) {
     sectorState[body.sector] = sensorData;
-    io.emit("sector-update", { sector: body.sector, data: evaluateSector(sensorData) });
+    evaluatedSectors[body.sector] = evaluateSector(sensorData);
+    io.emit("sector-update", { sector: body.sector, data: evaluatedSectors[body.sector] });
   }
 });
 
 // WebSocket: broadcast full sector grid periodically, simulating live sensors drifting
 io.on("connection", (socket) => {
-  socket.emit("sectors-init", (() => {
-    const out = {};
-    SECTORS.forEach((s) => (out[s] = evaluateSector(sectorState[s])));
-    return out;
-  })());
+  socket.emit("sectors-init", evaluatedSectors);
 });
 
 const telemetryInterval = setInterval(() => {
@@ -137,7 +134,8 @@ const telemetryInterval = setInterval(() => {
     rainfall: drift(cur.rainfall, 3, 0, 80),
     crackScore: drift(cur.crackScore, 0.03, 0, 1),
   };
-  io.emit("sector-update", { sector: pick, data: evaluateSector(sectorState[pick]) });
+  evaluatedSectors[pick] = evaluateSector(sectorState[pick]);
+  io.emit("sector-update", { sector: pick, data: evaluatedSectors[pick] });
 }, 4000);
 
 // API route fallback
