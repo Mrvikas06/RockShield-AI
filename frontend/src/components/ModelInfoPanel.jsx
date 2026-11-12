@@ -15,11 +15,11 @@ export default function ModelInfoPanel({ info }) {
       <div className="diagnostics-grid">
         <div className="inset-well diagnostic-well">
           <span className="diagnostic-title">Prediction Success Rate</span>
-          <span className="diagnostic-value">{(info.accuracy * 100).toFixed(1)}%</span>
+          <span className="diagnostic-value">{info.accuracy != null ? `${(info.accuracy * 100).toFixed(1)}%` : "---"}</span>
         </div>
         <div className="inset-well diagnostic-well">
           <span className="diagnostic-title">AI Decision Trees</span>
-          <span className="diagnostic-value">500</span>
+          <span className="diagnostic-value">{info.nEstimators || 100}</span>
         </div>
       </div>
 
@@ -44,10 +44,10 @@ export default function ModelInfoPanel({ info }) {
 
         {open && (
           <div className="inset-well mono" style={{ marginTop: 12, fontSize: 11, display: "flex", flexDirection: "column", gap: 6, color: "var(--stone-300)" }}>
-            <div><b>AI Method:</b> Random Forest Classifier</div>
+            <div><b>AI Method:</b> {info.algorithm || "Random Forest Classifier"}</div>
             <div><b>Training Data Records:</b> {info.trainSize} entries</div>
             <div><b>Test Data Records:</b> {info.testSize} entries</div>
-            <div><b>Checked Sensors:</b> Ground Vibration, Wall Movement, Steepness, Water Pressure, Rain</div>
+            <div><b>Checked Sensors:</b> Ground Vibration, Wall Movement, Steepness, Water Pressure, Rain, Strain, Cracks</div>
             <p style={{ margin: "8px 0 0 0", color: "var(--stone-400)", lineHeight: 1.4 }}>
               This early warning prototype runs calculations instantly when sliders are tuned. Actual site deployment hooks up to physical ground geophones.
             </p>

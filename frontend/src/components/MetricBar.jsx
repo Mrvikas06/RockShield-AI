@@ -58,7 +58,7 @@ export default function MetricBar({ sector, prediction, danger, onSelectMetric }
           desc: "AI model's calculated percentage chance of a landslide event",
           values: {
             "Hazard Probability": `${danger.toFixed(1)}%`,
-            "AI Calculation Basis": "500 decision trees computing parameters",
+            "AI Calculation Basis": "Random Forest ensemble computing parameters",
             "Data Reliability Confidence": "High (94.2%)",
             "Vibration Impact Contribution": "48% weight share"
           }
