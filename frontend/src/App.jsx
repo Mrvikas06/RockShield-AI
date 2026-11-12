@@ -42,6 +42,15 @@ export default function App() {
   const [selectedMetric, setSelectedMetric] = useState(null); 
 
   useEffect(() => {
+    if (!selectedMetric) return;
+    const handleKeyDown = (e) => {
+      if (e.key === "Escape") setSelectedMetric(null);
+    };
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [selectedMetric]); 
+
+  useEffect(() => {
     fetchModelInfo().then(setModelInfo).catch(() => {});
   }, []);
 
@@ -700,16 +709,23 @@ export default function App() {
 
       {/* Glassmorphic Click-to-Inspect Modal */}
       {selectedMetric && (
-        <div style={{
-          position: "fixed",
-          inset: 0,
-          background: "rgba(0, 0, 0, 0.4)",
-          backdropFilter: "blur(4px)",
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
-          zIndex: 200
-        }} onClick={() => setSelectedMetric(null)}>
+        <div 
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="metric-modal-title"
+          aria-describedby="metric-modal-desc"
+          style={{
+            position: "fixed",
+            inset: 0,
+            background: "rgba(0, 0, 0, 0.4)",
+            backdropFilter: "blur(4px)",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            zIndex: 200
+          }} 
+          onClick={() => setSelectedMetric(null)}
+        >
           <div className="glass-panel" style={{
             width: "450px",
             borderRadius: 12,
@@ -718,10 +734,16 @@ export default function App() {
           }} onClick={(e) => e.stopPropagation()}>
             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", borderBottom: "1px solid var(--gray)", paddingBottom: 12, marginBottom: 16 }}>
               <div>
-                <h3 style={{ fontSize: 16, fontWeight: 700, margin: 0, color: "var(--black)" }}>{selectedMetric.title}</h3>
-                <p style={{ fontSize: 11, color: "var(--dark-gray)", margin: "2px 0 0 0" }}>{selectedMetric.desc}</p>
+                <h3 id="metric-modal-title" style={{ fontSize: 16, fontWeight: 700, margin: 0, color: "var(--black)" }}>{selectedMetric.title}</h3>
+                <p id="metric-modal-desc" style={{ fontSize: 11, color: "var(--dark-gray)", margin: "2px 0 0 0" }}>{selectedMetric.desc}</p>
               </div>
-              <button onClick={() => setSelectedMetric(null)} style={{ background: "none", border: "none", cursor: "pointer", fontSize: 16, fontWeight: 700, color: "var(--dark-gray)" }}>&times;</button>
+              <button 
+                onClick={() => setSelectedMetric(null)} 
+                aria-label="Close dialog"
+                style={{ background: "none", border: "none", cursor: "pointer", fontSize: 16, fontWeight: 700, color: "var(--dark-gray)" }}
+              >
+                &times;
+              </button>
             </div>
             <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
               {Object.entries(selectedMetric.values).map(([label, value]) => (
