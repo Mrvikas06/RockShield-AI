@@ -1,6 +1,7 @@
 import express from "express";
 import cors from "cors";
 import http from "http";
+import fs from "fs";
 import path from "path";
 import { fileURLToPath } from "url";
 import { Server } from "socket.io";
@@ -122,7 +123,7 @@ io.on("connection", (socket) => {
   })());
 });
 
-setInterval(() => {
+const telemetryInterval = setInterval(() => {
   // Randomly drift one sector's sensors slightly to simulate live telemetry
   const pick = SECTORS[Math.floor(Math.random() * SECTORS.length)];
   const cur = sectorState[pick];
@@ -139,18 +140,43 @@ setInterval(() => {
   io.emit("sector-update", { sector: pick, data: evaluateSector(sectorState[pick]) });
 }, 4000);
 
+// API route fallback
+app.all("/api/*", (req, res) => {
+  res.status(404).json({ error: "API endpoint not found" });
+});
+
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
+const distPath = path.join(__dirname, "../../frontend/dist");
+const indexPath = path.join(distPath, "index.html");
 
-// Serve static assets from frontend build folder
-app.use(express.static(path.join(__dirname, "../../frontend/dist")));
+// Serve static assets from frontend build folder if available
+if (fs.existsSync(distPath)) {
+  app.use(express.static(distPath));
+}
 
 // Wildcard routing to route index.html
 app.get("*", (req, res) => {
-  res.sendFile(path.join(__dirname, "../../frontend/dist/index.html"));
+  if (fs.existsSync(indexPath)) {
+    res.sendFile(indexPath);
+  } else {
+    res.status(200).send("RockShield AI Backend is active. Run frontend build to serve the UI.");
+  }
 });
 
 const PORT = process.env.PORT || 4000;
 server.listen(PORT, () => {
   console.log(`[RockShield] Backend live on http://localhost:${PORT}`);
 });
+
+const shutdown = () => {
+  clearInterval(telemetryInterval);
+  io.close(() => {
+    server.close(() => {
+      process.exit(0);
+    });
+  });
+};
+
+process.on("SIGINT", shutdown);
+process.on("SIGTERM", shutdown);
