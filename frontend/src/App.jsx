@@ -40,6 +40,7 @@ export default function App() {
   const [rainfallRuleLimit, setRainfallRuleLimit] = useState(50);
   const [notifications, setNotifications] = useState([]);
   const [selectedMetric, setSelectedMetric] = useState(null); 
+  const [imageError, setImageError] = useState(false); 
 
   useEffect(() => {
     if (!selectedMetric) return;
@@ -619,11 +620,27 @@ export default function App() {
                       </div>
                     </div>
                     <div style={{ width: "100%", maxHeight: "500px", overflow: "hidden", borderRadius: 8 }}>
-                      <img 
-                        src="/rockfall_open_pit.png" 
-                        alt="Open Pit Rockfall Monitoring" 
-                        style={{ width: "100%", height: "auto", display: "block", objectFit: "cover" }} 
-                      />
+                      {imageError ? (
+                        <div style={{
+                          background: "var(--neutral-white-fill)",
+                          border: "1px dashed var(--gray)",
+                          borderRadius: 8,
+                          padding: "60px 24px",
+                          textAlign: "center"
+                        }}>
+                          <span className="eyebrow" style={{ color: "var(--dark-gray)" }}>OPTICAL SURVEILLANCE OFFLINE</span>
+                          <p style={{ fontSize: 13, color: "var(--dark-gray)", margin: "8px 0 0 0" }}>
+                            Aerial visual telemetry temporarily unavailable. Ground radar and sensor arrays remain active.
+                          </p>
+                        </div>
+                      ) : (
+                        <img 
+                          src="/rockfall_open_pit.png" 
+                          alt="Open Pit Rockfall Monitoring" 
+                          onError={() => setImageError(true)}
+                          style={{ width: "100%", height: "auto", display: "block", objectFit: "cover" }} 
+                        />
+                      )}
                     </div>
                   </div>
                 </div>
