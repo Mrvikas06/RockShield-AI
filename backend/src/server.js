@@ -5,7 +5,7 @@ import path from "path";
 import { fileURLToPath } from "url";
 import { Server } from "socket.io";
 import { trainModel, predict, getModelInfo } from "./model.js";
-import { FEATURES, computeRawScore, scoreToRisk } from "./dataset.js";
+import { computeRawScore } from "./dataset.js";
 
 const app = express();
 app.use(cors());
