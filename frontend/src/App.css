@@ -404,8 +404,9 @@
 /* ---------- Dashboard Grid Tabbed Transitions ---------- */
 .dashboard-grid {
   display: grid;
-  grid-template-columns: 1.3fr 1fr;
+  grid-template-columns: 1.15fr 0.85fr;
   gap: 32px;
+  width: 100%;
   align-items: start;
   animation: slideUp 0.4s cubic-bezier(0.16, 1, 0.3, 1) both;
 }
@@ -704,20 +705,6 @@
 .toast.success { border-left-color: var(--success); }
 .toast.warning { border-left-color: var(--yellow); }
 .toast.info { border-left-color: var(--secondary); }
-
-/* ---------- Dashboard Grid & Layout Defaults ---------- */
-.dashboard-grid {
-  display: grid;
-  grid-template-columns: 1.15fr 0.85fr;
-  gap: 32px;
-  width: 100%;
-}
-
-.dashboard-column {
-  display: flex;
-  flex-direction: column;
-  gap: 32px;
-}
 
 .feed-grid {
   display: grid;
