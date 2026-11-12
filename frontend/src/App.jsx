@@ -31,8 +31,24 @@ export default function App() {
   const [connected, setConnected] = useState(false);
   const [modelInfo, setModelInfo] = useState(null);
   const [live, setLive] = useState(null); 
-  const [activeTab, setActiveTab] = useState("dashboard"); 
+  const [activeTab, setActiveTab] = useState(() => {
+    try {
+      const saved = localStorage.getItem("rockshield_tab");
+      return ["dashboard", "analytics", "diagnostics", "pit_image"].includes(saved) ? saved : "dashboard";
+    } catch {
+      return "dashboard";
+    }
+  }); 
   const [isAnalyzing, setIsAnalyzing] = useState(false);
+
+  const handleTabChange = useCallback((tab) => {
+    setActiveTab(tab);
+    try {
+      localStorage.setItem("rockshield_tab", tab);
+    } catch {
+      // Storage access blocked or restricted
+    }
+  }, []);
   
   // Advanced features state
   const [timelinePoint, setTimelinePoint] = useState("live");
@@ -157,7 +173,7 @@ export default function App() {
         connected={connected} 
         avgVibration={avgVibration} 
         activeTab={activeTab} 
-        onTabChange={setActiveTab}
+        onTabChange={handleTabChange}
         notifications={notifications}
         clearNotifications={() => setNotifications([])}
       />
