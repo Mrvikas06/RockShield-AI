@@ -84,25 +84,27 @@ export function CircularProgressChart({ targetValue = 0, isProcessing = false })
       setCurrentValue(0);
       return;
     }
-    let start = 0;
-    const end = Math.round(targetValue);
-    if (start === end) {
-      setCurrentValue(end);
-      return;
-    }
 
-    const duration = 1000;
-    const stepTime = Math.abs(Math.floor(duration / end));
-    
-    const timer = setInterval(() => {
-      start += 1;
-      setCurrentValue(start);
-      if (start >= end) {
-        clearInterval(timer);
+    const target = Math.min(100, Math.max(0, Math.round(Number(targetValue) || 0)));
+    let animationFrameId;
+    const startTime = performance.now();
+    const duration = 500;
+    const fromValue = currentValue;
+
+    const animate = (now) => {
+      const elapsed = now - startTime;
+      const progress = Math.min(elapsed / duration, 1);
+      const eased = 1 - Math.pow(1 - progress, 3);
+      const nextVal = Math.round(fromValue + (target - fromValue) * eased);
+      setCurrentValue(nextVal);
+
+      if (progress < 1) {
+        animationFrameId = requestAnimationFrame(animate);
       }
-    }, Math.max(stepTime, 10));
+    };
 
-    return () => clearInterval(timer);
+    animationFrameId = requestAnimationFrame(animate);
+    return () => cancelAnimationFrame(animationFrameId);
   }, [targetValue, isProcessing]);
 
   let strokeColor = "var(--success)";
