@@ -178,9 +178,11 @@ app.get("*", (req, res) => {
 });
 
 const PORT = process.env.PORT || 4000;
-server.listen(PORT, () => {
-  console.log(`[RockShield] Backend live on http://localhost:${PORT}`);
-});
+if (process.env.NODE_ENV !== "test") {
+  server.listen(PORT, () => {
+    console.log(`[RockShield] Backend live on http://localhost:${PORT}`);
+  });
+}
 
 const shutdown = () => {
   clearInterval(telemetryInterval);
@@ -193,3 +195,5 @@ const shutdown = () => {
 
 process.on("SIGINT", shutdown);
 process.on("SIGTERM", shutdown);
+
+export { app, server, io, telemetryInterval };
