@@ -212,6 +212,11 @@ export default function Header({ connected, avgVibration, activeTab, onTabChange
             }} />
             {connected ? "LIVE FEED" : "OFFLINE"}
           </div>
+          {typeof avgVibration === "number" && (
+            <span style={{ borderLeft: "1px solid var(--gray)", paddingLeft: 12, fontWeight: 500 }}>
+              SEISMIC: <span style={{ color: "var(--black)", fontWeight: 600 }}>{avgVibration.toFixed(2)} mm/s</span>
+            </span>
+          )}
           <span style={{ borderLeft: "1px solid var(--gray)", paddingLeft: 12, fontWeight: 500 }}>
             {now.toLocaleTimeString("en-IN", { hour12: false })}
           </span>
