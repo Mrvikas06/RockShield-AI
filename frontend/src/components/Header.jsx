@@ -31,13 +31,18 @@ export default function Header({ connected, avgVibration, activeTab, onTabChange
 
   // Dynamically calculate navigation underline based on active button bounding rect
   useEffect(() => {
-    const activeEl = document.querySelector(".header-menu button.active-tab");
-    if (activeEl) {
-      setIndicatorStyle({
-        left: activeEl.offsetLeft,
-        width: activeEl.offsetWidth,
-      });
-    }
+    const updateIndicator = () => {
+      const activeEl = document.querySelector(".header-menu button.active-tab");
+      if (activeEl) {
+        setIndicatorStyle({
+          left: activeEl.offsetLeft,
+          width: activeEl.offsetWidth,
+        });
+      }
+    };
+    updateIndicator();
+    window.addEventListener("resize", updateIndicator);
+    return () => window.removeEventListener("resize", updateIndicator);
   }, [activeTab]);
 
   return (
