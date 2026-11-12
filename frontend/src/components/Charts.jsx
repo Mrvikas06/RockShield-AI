@@ -203,17 +203,24 @@ export function SensorAnalysisChart({ sensors }) {
 export function FeatureImportanceChart({ importance }) {
   if (!importance) return null;
   const FEATURE_MAP = {
+    "Slope Angle": "Steepness",
+    "Displacement": "Wall Movement",
+    "Strain": "Stretching",
+    "Pore Pressure": "Water Pressure",
+    "Vibration": "Vibration",
+    "Rainfall": "Rainfall",
+    "Crack Score": "Wall Cracks",
     vibration: "Vibration",
     displacement: "Wall Movement",
     slope: "Steepness",
     porePressure: "Water Pressure",
     rainfall: "Rainfall",
     crackScore: "Wall Cracks",
-    strain: "Stretching"
+    strain: "Stretching",
   };
   const data = importance.map((d) => ({
     name: FEATURE_MAP[d.feature] || d.feature,
-    value: +(d.importance * 100).toFixed(1)
+    value: +(d.importance * 100).toFixed(1),
   }));
   return (
     <div className="panel">
