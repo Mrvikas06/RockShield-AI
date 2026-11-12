@@ -1,14 +1,33 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 export default function Header({ connected, avgVibration, activeTab, onTabChange, notifications, clearNotifications }) {
   const [now, setNow] = useState(new Date());
   const [isOpen, setIsOpen] = useState(false);
   const [indicatorStyle, setIndicatorStyle] = useState({ left: 0, width: 0 });
+  const dropdownRef = useRef(null);
 
   useEffect(() => {
     const id = setInterval(() => setNow(new Date()), 1000);
     return () => clearInterval(id);
   }, []);
+
+  useEffect(() => {
+    if (!isOpen) return;
+    const handleOutsideClick = (e) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(e.target)) {
+        setIsOpen(false);
+      }
+    };
+    const handleKeyDown = (e) => {
+      if (e.key === "Escape") setIsOpen(false);
+    };
+    document.addEventListener("mousedown", handleOutsideClick);
+    document.addEventListener("keydown", handleKeyDown);
+    return () => {
+      document.removeEventListener("mousedown", handleOutsideClick);
+      document.removeEventListener("keydown", handleKeyDown);
+    };
+  }, [isOpen]);
 
   // Dynamically calculate navigation underline based on active button bounding rect
   useEffect(() => {
@@ -95,7 +114,7 @@ export default function Header({ connected, avgVibration, activeTab, onTabChange
       <div className="header-actions" style={{ flexShrink: 0, position: "relative" }}>
         <div className="mono" style={{ fontSize: 11, color: "var(--dark-gray)", display: "flex", alignItems: "center", gap: 14 }}>
           {/* Notification Bell Icon Button */}
-          <div style={{ position: "relative" }}>
+          <div ref={dropdownRef} style={{ position: "relative" }}>
             <button 
               onClick={() => setIsOpen(!isOpen)}
               style={{

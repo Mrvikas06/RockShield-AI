@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 export const DEFAULT_SCENARIOS = {
   Custom: null,
@@ -18,6 +18,25 @@ export { DEFAULT_SCENARIOS as SCENARIOS };
 
 export default function SensorControls({ sensors, onChange, sector, onSector, sectors, scenario, onScenario, isAnalyzing, onRunAnalysis }) {
   const [isOpen, setIsOpen] = useState(false);
+  const dropdownRef = useRef(null);
+
+  useEffect(() => {
+    if (!isOpen) return;
+    const handleOutsideClick = (e) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(e.target)) {
+        setIsOpen(false);
+      }
+    };
+    const handleKeyDown = (e) => {
+      if (e.key === "Escape") setIsOpen(false);
+    };
+    document.addEventListener("mousedown", handleOutsideClick);
+    document.addEventListener("keydown", handleKeyDown);
+    return () => {
+      document.removeEventListener("mousedown", handleOutsideClick);
+      document.removeEventListener("keydown", handleKeyDown);
+    };
+  }, [isOpen]);
 
   return (
     <div className="panel">
@@ -29,7 +48,7 @@ export default function SensorControls({ sensors, onChange, sector, onSector, se
       </div>
 
       <div className="slider-group">
-        <div className="slider-container" style={{ position: "relative" }}>
+        <div ref={dropdownRef} className="slider-container" style={{ position: "relative" }}>
           <label className="slider-label-row">
             <span>Active Mine Zone</span>
           </label>
