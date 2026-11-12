@@ -43,7 +43,16 @@ export default function SectorMap({ sectors, activeSector, onSelect }) {
           return (
             <div
               key={sec}
+              role="button"
+              tabIndex={0}
+              aria-label={`Sector ${sec}, Status ${theme.label}, Vibration ${d.vibration?.toFixed(2)} millimeters per second, Wall tilt ${d.displacement?.toFixed(1)} millimeters`}
               onClick={() => onSelect(sec)}
+              onKeyDown={(e) => {
+                if (e.key === "Enter" || e.key === " ") {
+                  e.preventDefault();
+                  onSelect(sec);
+                }
+              }}
               className={`sector-cell ${stateClass} ${active ? "active-sector" : ""}`}
               style={{
                 background: active 
