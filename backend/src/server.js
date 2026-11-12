@@ -77,26 +77,39 @@ app.post("/api/predict", (req, res) => {
   const body = req.body || {};
   const required = ["slope", "displacement", "strain", "porePressure", "vibration", "rainfall", "crackScore"];
   for (const key of required) {
-    if (typeof body[key] !== "number" || Number.isNaN(body[key])) {
-      return res.status(400).json({ error: `Missing/invalid field: ${key}` });
+    if (typeof body[key] !== "number" || !Number.isFinite(body[key])) {
+      return res.status(400).json({ error: `Missing or invalid numerical field: ${key}` });
     }
   }
-  const vec = toVec(body);
+
+  const sensorData = {
+    slope: body.slope,
+    displacement: body.displacement,
+    strain: body.strain,
+    porePressure: body.porePressure,
+    vibration: body.vibration,
+    rainfall: body.rainfall,
+    crackScore: body.crackScore,
+  };
+
+  const vec = toVec(sensorData);
   const { prediction, probabilities } = predict(vec);
   const danger = ["MEDIUM", "HIGH", "CRITICAL"].reduce((acc, k) => acc + (probabilities[k] || 0), 0) * 100;
-  const rawScore = computeRawScore(body);
+  const rawScore = computeRawScore(sensorData);
+
+  const hasSectorOverride = typeof body.sector === "string" && Boolean(sectorState[body.sector]);
 
   res.json({
     prediction,
     probabilities,
     danger,
     rawScore,
-    sectorOverride: sectorState[body.sector] ? true : false,
+    sectorOverride: hasSectorOverride,
   });
 
-  if (body.sector && sectorState[body.sector]) {
-    sectorState[body.sector] = body;
-    io.emit("sector-update", { sector: body.sector, data: evaluateSector(body) });
+  if (hasSectorOverride) {
+    sectorState[body.sector] = sensorData;
+    io.emit("sector-update", { sector: body.sector, data: evaluateSector(sensorData) });
   }
 });
 
