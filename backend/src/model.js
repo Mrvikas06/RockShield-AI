@@ -25,6 +25,13 @@ function shuffleSplit(rows, testRatio, seed) {
   return { trainIdx: idx.slice(0, cut), testIdx: idx.slice(cut) };
 }
 
+const MODEL_CONFIG = {
+  nEstimators: 100,
+  maxDepth: 10,
+  minSamplesSplit: 4,
+  seed: 42,
+};
+
 export function trainModel() {
   const data = createDataset(3000, 42);
   const { trainIdx, testIdx } = shuffleSplit(data, 0.2, 42);
@@ -35,10 +42,10 @@ export function trainModel() {
   const yTest = testIdx.map((i) => RISK_TO_IDX[data[i].risk]);
 
   model = new RandomForest({
-    nEstimators: 100,
-    maxDepth: 10,
-    minSamplesSplit: 4,
-    seed: 42,
+    nEstimators: MODEL_CONFIG.nEstimators,
+    maxDepth: MODEL_CONFIG.maxDepth,
+    minSamplesSplit: MODEL_CONFIG.minSamplesSplit,
+    seed: MODEL_CONFIG.seed,
     nClasses: RISK_LEVELS.length,
   });
   model.fit(XTrain, yTrain);
@@ -77,7 +84,10 @@ export function predict(inputVec) {
 export function getModelInfo() {
   if (!model) trainModel();
   return {
-    algorithm: "Random Forest Classifier (100 trees, depth 10, Gini impurity)",
+    algorithm: `Random Forest Classifier (${MODEL_CONFIG.nEstimators} trees, depth ${MODEL_CONFIG.maxDepth}, Gini impurity)`,
+    nEstimators: MODEL_CONFIG.nEstimators,
+    maxDepth: MODEL_CONFIG.maxDepth,
+    minSamplesSplit: MODEL_CONFIG.minSamplesSplit,
     trainSize,
     testSize,
     accuracy: testAccuracy,
